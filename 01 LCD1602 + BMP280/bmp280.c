@@ -8,6 +8,17 @@
 #include "main.h"
 #include "bmp280.h"
 
+static uint8_t BMP280_read8 (BMP280_t *Bmp, uint8_t Register);
+static uint16_t BMP280_read16(BMP280_t *Bmp, uint8_t Register);
+static uint32_t BMP280_read24(BMP280_t *Bmp, uint8_t Register);
+
+static void BMP280_write8(BMP280_t *Bmp, uint8_t Register, uint8_t Value);
+
+static uint32_t BMP280_readTemperatureRaw(BMP280_t *Bmp);
+static uint32_t BMP280_readPressureRaw(BMP280_t *Bmp);
+
+static float BMP280_readTemperature (BMP280_t *Bmp);
+
 uint8_t BMP280_init(BMP280_t *Bmp, I2C_HandleTypeDef *I2c, uint8_t address)
 {
 	uint8_t chipID;

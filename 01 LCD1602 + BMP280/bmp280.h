@@ -48,7 +48,7 @@
 #define BMP280_NORMALMODE		3
 
 //
-//	Coeffs registers
+//	Compensation parameters read only
 //
 #define	BMP280_DIG_T1		0x88
 #define	BMP280_DIG_T2		0x8A
@@ -70,7 +70,7 @@
 #define	BMP280_CHIPID			0xD0
 #define	BMP280_VERSION			0xD1
 #define	BMP280_SOFTRESET		0xE0
-#define	BMP280_CAL26			0xE1  // R calibration stored in 0xE1-0xF0
+#define	BMP280_CAL26			0xE1
 #define	BMP280_STATUS			0xF3
 #define	BMP280_CONTROL			0xF4
 #define	BMP280_CONFIG			0xF5
@@ -87,29 +87,19 @@ typedef struct
 	I2C_HandleTypeDef 	*bmp280I2c;
 	uint8_t 			bmp280AddressDevice;
 
-	uint16_t 			t1, p1;
-	int16_t 			t2, t3, p2, p3, p4, p5, p6, p7, p8, p9;
+	uint16_t 			t1, p1;	//	Compensation parameters	read from sensor
+	int16_t 			t2, t3, p2, p3, p4, p5, p6, p7, p8, p9;	//	Compensation parameters	read from sensor
 
-	int32_t 			t_fine;
+	int32_t 			t_fine;	//	Carries a fine resolution temperature value over to the pressure compensation formula
 
 } BMP280_t;
 
 uint8_t BMP280_init (BMP280_t *Bmp, I2C_HandleTypeDef *I2c, uint8_t Address);
 
-uint8_t BMP280_read8 (BMP280_t *Bmp, uint8_t Register);
-uint16_t BMP280_read16(BMP280_t *Bmp, uint8_t Register);
-uint32_t BMP280_read24(BMP280_t *Bmp, uint8_t Register);
-
-void BMP280_write8(BMP280_t *Bmp, uint8_t Register, uint8_t Value);
-
 void BMP280_setMode(BMP280_t *Bmp, uint8_t Mode);
 void BMP280_setPressureOversampling(BMP280_t *Bmp, uint8_t Oversampling);
 void BMP280_setTemperatureResolution(BMP280_t *Bmp, uint8_t Resolution);
 
-uint32_t BMP280_readTemperatureRaw(BMP280_t *Bmp);
-uint32_t BMP280_readPressureRaw(BMP280_t *Bmp);
-
-float BMP280_readTemperature (BMP280_t *Bmp);
 uint8_t BMP280_readTemperatureAndPressure(BMP280_t *Bmp, float *Temperature, float *Pressure);
 
 #endif /* INC_BMP280_H_ */
