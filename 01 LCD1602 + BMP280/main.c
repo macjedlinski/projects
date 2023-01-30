@@ -27,6 +27,7 @@
 #include "stdbool.h"
 #include "1602_lcd.h"
 #include "bmp280.h"
+#include <stdbool.h>
 //#include "lcd_hd44780_lib.h"
 
 /* USER CODE END Includes */
@@ -52,6 +53,8 @@ BMP280_t BMP280;
 float temperature;
 float pressure;
 char buffer[16];
+uint32_t counter = 0;
+bool status = true;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,22 +103,24 @@ int main(void)
   LCD_init();
   LCD_clearDisplay();
   BMP280_init(&BMP280, &hi2c2, 0x76);
+  counter =  HAL_GetTick();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
  	while (1)
  	{
- 		LCD_clearDisplay();
+ 		if((HAL_GetTick() - counter) > 5000)
+ 		{
+ 			counter = HAL_GetTick();
+ 	 		LCD_clearDisplay();
+ 	 		snprintf(buffer, sizeof buffer, "%0.1f C", temperature);
+ 	 		LCD_sendText(buffer);
+ 	 		snprintf(buffer, sizeof buffer, "%0.2f hPa", pressure);
+ 	 		LCD_set2Line();
+ 	 		LCD_sendText(buffer);
+ 		}
  		BMP280_readTemperatureAndPressure(&BMP280, &temperature, &pressure);
-
- 		snprintf(buffer, sizeof buffer, "%f", temperature);
- 		LCD_sendText(buffer);
- 		snprintf(buffer, sizeof buffer, "%f", pressure);
- 		LCD_set2Line();
- 		LCD_sendText(buffer);
-
- 		HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
