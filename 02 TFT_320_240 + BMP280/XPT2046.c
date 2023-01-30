@@ -18,9 +18,26 @@ static SPI_HandleTypeDef *Xpt2046SpiHandler;
 static IRQn_Type Xpt2046IrqnnHander;
 static uint8_t SendBuffer[5], ReceiveBuffer[5];
 volatile XPT2046_Status TouchState;
+static uint8_t CalibrationMode;
 static uint16_t TouchSamples[2][MAX_SAMPLES];
 static uint16_t SampleCounter = 0;
 static uint32_t SampleTimer = 0;
+
+//
+//	CALIBRATION DATA USED FOR EACH CORDS CALCULATION
+//
+#if (TOUCH_ROTATION == 0)
+CalibrationData_t CalibrationData = {-.0009337, -.0636839, 250.342, -.0889775, -.00118110, 356.538}; // default calibration data
+#endif
+#if (TOUCH_ROTATION == 1)
+CalibrationData_t CalibrationData = {-.0885542, .0016532, 349.800, .0007309, .06543699, -15.290}; // default calibration data
+#endif
+#if (TOUCH_ROTATION == 2)
+CalibrationData_t CalibrationData = {.0006100, .0647828, -13.634, .0890609, .0001381, -35.73}; // default calibration data
+#endif
+#if (TOUCH_ROTATION == 3)
+CalibrationData_t CalibrationData = {.0902216, .0006510, -38.657, -.0010005, -.0667030, 258.08}; // default calibration data
+#endif
 
 //
 //	FUNCTIONS
@@ -82,8 +99,16 @@ void XPT2046_ReadTouchPoint(uint16_t *x, uint16_t *y)
 	uint16_t tempX, tempY;
 	XPT2046_ReadRawData(&tempX, &tempY);
 
-	*x = tempX;
-	*y = tempY;
+	if(CalibrationMode == 0)
+	{
+		*x = CalibrationData.alpha_x * tempX + CalibrationData.beta_x * tempY + CalibrationData.delta_x;
+		*y = CalibrationData.alpha_y * tempX + CalibrationData.beta_y * tempY + CalibrationData.delta_y;
+	}
+	else
+	{
+		*x = tempX;
+		*y = tempY;
+	}
 }
 
 void XPT2046_Task(void)

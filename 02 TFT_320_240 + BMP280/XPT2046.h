@@ -13,6 +13,20 @@
 #define TOUCH_IRQ_Pin		GPIO_PIN_8
 
 //
+//	STRUCT
+//
+typedef struct
+{
+	long double alpha_x;
+	long double beta_x;
+	long double delta_x;
+	long double alpha_y;
+	long double beta_y;
+	long double delta_y;
+
+} CalibrationData_t;
+
+//
 //	ENUM
 //
 typedef enum
