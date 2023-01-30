@@ -28,8 +28,6 @@
 #include "1602_lcd.h"
 #include "bmp280.h"
 #include <stdbool.h>
-//#include "lcd_hd44780_lib.h"
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
